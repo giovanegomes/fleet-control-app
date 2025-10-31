@@ -1,13 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Router } from './src/routes';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { PaperProvider } from 'react-native-paper';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Router />
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <PaperProvider>
+        <StatusBar style="auto" />
+        <Router />
+      </PaperProvider>
+    </SafeAreaView>
   );
 }
 
