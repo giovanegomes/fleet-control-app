@@ -1,22 +1,34 @@
 import { useForm } from "react-hook-form";
-import { Button, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { z } from "zod";
 import { Form } from "../../components/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./styles";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const checklistSchema = z.object({
-  vehicle: z.string().nonempty('Selecione o veículo'),
+  vehicle: z.string().min(1, 'Selecione o veículo'),
   date: z.date(),
-  tires: z.boolean().transform((value) => !!value),
-  lights: z.boolean().transform((value) => !!value),
-  brakes: z.boolean().transform((value) => !!value),
-  body: z.boolean().transform((value) => !!value),
-  notes: z.string().nonempty('Tem itens da vistoria pendentes, informe detalhes sobre o problema.'),
-});
+  tires: z.boolean(),
+  lights: z.boolean(),
+  brakes: z.boolean(),
+  body: z.boolean(),
+  notes: z.string(),
+}).refine(
+  (data) => {
+    const hasIssue = !data.tires || !data.lights || !data.brakes || !data.body;
+    if (hasIssue) {
+      return data.notes.trim().length > 0;
+    }
+    return true;
+  },
+  {
+    message: 'Tem itens da vistoria pendentes, informe detalhes sobre o problema.',
+    path: ['notes'],
+  }
+);
 
 const DEFAULT_VALUES = {
   vehicle: "",
@@ -45,11 +57,27 @@ export function ChecklistScreen() {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const { handleSubmit } = form;
+  const { 
+    handleSubmit,
+    watch,
+    trigger,
+    formState: { submitCount }
+  } = form;
+  const [
+    tires,
+    lights,
+    brakes,
+    body
+  ] = watch(['tires', 'lights', 'brakes', 'body']);
   
   const submit = async (data: ChecklistInputs) => {
     console.log("data", data);
   };
+
+  useEffect(() => {
+    if (!submitCount) return;
+    trigger('notes');
+  }, [tires, lights, brakes, body, submitCount, trigger]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -61,7 +89,7 @@ export function ChecklistScreen() {
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, handleSubmit]);
 
   return (
     <View style={styles.container}>
@@ -83,7 +111,7 @@ export function ChecklistScreen() {
           <Form.Checkbox name="brakes" label="Freios" />
           <Form.Checkbox name="body" label="Lataria" />
         </View>
-        <Form.TextInput name="notes" label="Observações:"/>
+        <Form.TextInput name="notes" label="Observações:" />
       </Form>
     </View>
   )
