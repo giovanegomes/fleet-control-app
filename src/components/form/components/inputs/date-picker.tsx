@@ -21,7 +21,7 @@ export function DatePickerField<T extends FieldValues>({
     <Controller
       control={control}
       name={name}
-      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
+      render={({ field: { value, onChange }, fieldState: { error } }) => (
         <View style={styles.container}>
           <DatePicker
             label={label}

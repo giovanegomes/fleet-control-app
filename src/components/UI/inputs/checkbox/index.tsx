@@ -23,20 +23,18 @@ export function Checkbox({
         color={checkboxColor}
         uncheckedColor={hasError ? theme.colors.error : undefined}
       />
-      {label && (
-        <Text 
-          variant="bodyLarge"
-          style={[styles.label, hasError && { color: theme.colors.error }]}
-        >
-          {label}
-        </Text>
-      )}
+      <Text 
+        variant="bodyLarge"
+        style={[styles.label, hasError && { color: theme.colors.error }]}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }
 
 interface Props {
-  label?: string;
+  label: string;
   selected?: boolean;
   hasError?: boolean;
   onChange: (value: boolean) => void;

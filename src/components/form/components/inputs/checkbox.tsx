@@ -7,7 +7,7 @@ import { styles } from "./styles";
 
 interface CheckboxProps<T extends FieldValues> {
   name: Path<T>;
-  label?: string;
+  label: string;
 }
 
 export function CheckboxField<T extends FieldValues>({

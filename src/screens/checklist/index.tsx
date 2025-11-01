@@ -60,11 +60,9 @@ export function ChecklistScreen() {
           <Text style={styles.warningText}>Verifique os itens da vistoria e assinale os que estão de acordo.</Text>
           <Text style={styles.warningText}>Caso encontre algum problema descreva os detalhes no campo de observações.</Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
+        <View>
           <Form.Checkbox name="tires" label="Pneus" />
           <Form.Checkbox name="lights" label="Luzes" />
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around'}}>
           <Form.Checkbox name="brakes" label="Freios" />
           <Form.Checkbox name="body" label="Lataria" />
         </View>

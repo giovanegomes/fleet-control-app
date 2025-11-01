@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Menu, TextInput, useTheme } from "react-native-paper";
 import { styles } from "./styles";
+import { View, TouchableWithoutFeedback } from "react-native";
 
 type Option = {
   label: string;
@@ -17,48 +18,54 @@ export function Select({
 }: SelectProps) {
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
+  const selectedOption = options.find(option => option.value === selected);
+  const displayValue = selectedOption?.label || "";
 
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
-  const selectedOption = options.find(opt => opt.value === selected);
-  const displayValue = selectedOption?.label || "";
+  const handleSelect = (value: string) => {
+    onChange(value);
+    closeMenu();
+  };
 
   return (
-    <Menu
-      visible={visible}
-      onDismiss={closeMenu}
-      anchor={
-        <TextInput
-          label={label}
-          placeholder={placeholder}
-          value={displayValue}
-          onFocus={openMenu}
-          error={hasError}
-          mode="outlined"
-          editable={false}
-          right={<TextInput.Icon icon="chevron-down" onPress={openMenu} />}
-          style={styles.input}
-          outlineStyle={styles.outline}
-        />
-      }
-      contentStyle={styles.menuContent}
-    >
-      {options.map((option) => (
-        <Menu.Item
-          key={option.value}
-          onPress={() => {
-            onChange(option.value);
-            closeMenu();
-          }}
-          title={option.label}
-          titleStyle={selected === option.value && { 
-            color: theme.colors.primary,
-            fontWeight: '600'
-          }}
-        />
-      ))}
-    </Menu>
+    <View key={`select-${selected || 'empty'}`}>
+      <Menu
+        visible={visible}
+        onDismiss={closeMenu}
+        contentStyle={styles.menuContent}
+        anchor={
+          <TouchableWithoutFeedback onPress={openMenu}>
+            <View>
+              <TextInput          
+                label={label}
+                placeholder={placeholder}
+                value={displayValue}
+                error={hasError}
+                mode="outlined"
+                editable={false}
+                right={<TextInput.Icon icon="chevron-down" onPress={openMenu} />}
+                style={styles.input}
+                outlineStyle={styles.outline}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        }
+      >
+        {options.map((option) => (
+          <Menu.Item
+            key={option.value}
+            onPress={() => handleSelect(option.value)}
+            title={option.label}
+            titleStyle={selected === option.value && { 
+              color: theme.colors.primary,
+              fontWeight: '600'
+            }}
+          />
+        ))}
+      </Menu>
+    </View>
   );
 }
 
@@ -70,4 +77,3 @@ interface SelectProps {
   placeholder?: string;
   hasError?: boolean;
 }
-
