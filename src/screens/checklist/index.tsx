@@ -4,6 +4,9 @@ import { z } from "zod";
 import { Form } from "../../components/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./styles";
+import { useLayoutEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const checklistSchema = z.object({
   vehicle: z.string().nonempty('Selecione o veículo'),
@@ -34,6 +37,8 @@ const VEHICLES = [
 ];
 
 export function ChecklistScreen() {
+  const navigation = useNavigation();
+
   const form = useForm<ChecklistInputs>({
     resolver: zodResolver(checklistSchema),
     mode: 'onChange',
@@ -45,6 +50,18 @@ export function ChecklistScreen() {
   const submit = async (data: ChecklistInputs) => {
     console.log("data", data);
   };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <MaterialIcons
+          name="check" 
+          size={25} 
+          onPress={handleSubmit(submit)}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -68,7 +85,6 @@ export function ChecklistScreen() {
         </View>
         <Form.TextInput name="notes" label="Observações:"/>
       </Form>
-      <Button title="Salvar" onPress={handleSubmit(submit)} />
     </View>
   )
 }
